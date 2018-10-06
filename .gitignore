@@ -1,0 +1,4 @@
+#Files to ignore while commiting to git
+
+#target folder or class files
+*target/
