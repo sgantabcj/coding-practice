@@ -6,7 +6,7 @@ public class LevelOrderTraversal {
     private boolean isBalanced = true;
 
     public static void main(String[] args) {
-        Integer[] input = new Integer[]{1,2,2,3,3,null,null,4,4};
+        Integer[] input = new Integer[]{5,4,8,11,null,13,4,7,2,null,null,null,1};
         TreeNode root = getTree(input);
         LevelOrderTraversal lot = new LevelOrderTraversal();
         /*printTree(root);
@@ -14,10 +14,19 @@ public class LevelOrderTraversal {
         System.out.println("Test: Given array: " + Arrays.toString(input) + " Tree converted to array: " + Arrays.toString(treeToArray(root)));
         System.out.println("Balanced BST tree from given: " + Arrays.toString(input) + " is: ");
         printTree(getHeightBalancedBST(input));*/
+
         //To test if given tree is height balanced tree
         //positive test case - [3,9,20,null,null,15,7]
         //negative test case - [1,2,2,3,3,null,null,4,4]
-        System.out.println("Is given tree: "+Arrays.toString(input)+" is balanced: "+lot.isTreeBalanced(root));
+//        System.out.println("Is given tree: " + Arrays.toString(input) + " is balanced: " + lot.isTreeBalanced(root));
+
+        //To get the min depth of the tree
+//        System.out.println("The min depth of given tree is: "+lot.minDepth(root));
+
+        //To find if a sum is present in a tree where the sum of all the values from root to leaf is equal to given sum
+        int reqSum = 22;
+        printTree(root);
+        System.out.println("Does given tree contains the sum: "+reqSum+" - "+lot.hasPathSum(root,reqSum));
     }
 
     private static TreeNode getTree(Integer[] input) {
@@ -26,7 +35,7 @@ public class LevelOrderTraversal {
         Queue<TreeNode> nodeQ = new LinkedList<>();
         nodeQ.add(root);
         int index = 1;
-        TreeNode currNode = null;
+        TreeNode currNode;
         while (!nodeQ.isEmpty()) {
             currNode = nodeQ.poll();
 
@@ -82,12 +91,14 @@ public class LevelOrderTraversal {
         Queue<TreeNode> nodeQ = new LinkedList<>();
         nodeQ.add(root);
         List<Integer> retVal = new ArrayList<>();
-        TreeNode currNode = null;
+        TreeNode currNode;
         while (!nodeQ.isEmpty()) {
             currNode = nodeQ.poll();
-            if (currNode != null) retVal.add(currNode.val);
-            if (currNode.left != null) nodeQ.add(currNode.left);
-            if (currNode.right != null) nodeQ.add(currNode.right);
+            if (currNode != null) {
+                retVal.add(currNode.val);
+                if (currNode.left != null) nodeQ.add(currNode.left);
+                if (currNode.right != null) nodeQ.add(currNode.right);
+            }
         }
         return retVal.toArray(new Integer[0]);
     }
@@ -96,7 +107,7 @@ public class LevelOrderTraversal {
         List<List<Integer>> result = new ArrayList<>();
         Deque<TreeNode> nextToVisitQ = new LinkedList<>();
         nextToVisitQ.addFirst(root);
-        TreeNode currNode = null;
+        TreeNode currNode;
         while (!nextToVisitQ.isEmpty()) {
             int length = nextToVisitQ.size();
             List<Integer> currLevel = new ArrayList<>();
@@ -165,7 +176,7 @@ public class LevelOrderTraversal {
         Deque<List<Integer>> stack = new ArrayDeque<>();
         Queue<TreeNode> nodeQ = new LinkedList<>();
         nodeQ.add(root);
-        TreeNode currNode = null;
+        TreeNode currNode;
         while (!nodeQ.isEmpty()) {
             List<Integer> currLevelList = new ArrayList<>();
             int length = nodeQ.size();
@@ -188,21 +199,56 @@ public class LevelOrderTraversal {
 
     private boolean isTreeBalanced(TreeNode root) {
         if (root == null) return isBalanced;
-        getDepth(root);
+        checkIsTreeBalanced(root);
         return isBalanced;
     }
 
-    private int getDepth(TreeNode tn) {
+    private int checkIsTreeBalanced(TreeNode tn) {
         if (tn == null || !isBalanced) return -1;
-        int l = getDepth(tn.left);
-        int r = getDepth(tn.right);
+        int l = checkIsTreeBalanced(tn.left);
+        int r = checkIsTreeBalanced(tn.right);
         if (Math.abs(r - l) > 1) isBalanced = false;
         return Math.max(r, l) + 1;
     }
+
+    private int minDepth(TreeNode root) {
+        int retVal = 0;
+        if(root == null) return retVal;
+        Deque<TreeNode> nodeQ = new ArrayDeque<>();
+        nodeQ.add(root);
+        TreeNode currNode;
+        wl:
+        while(!nodeQ.isEmpty()){
+            int length = nodeQ.size();
+            for(int i=1;i<=length;i++){
+                currNode = nodeQ.poll();
+                if(currNode!=null){
+                    if(currNode.left == null && currNode.right == null){
+                        retVal++;
+                        break wl;
+                    }
+                    if(currNode.right != null) nodeQ.add(currNode.right);
+                    if(currNode.left != null) nodeQ.add(currNode.left);
+                }
+            }
+            retVal++;
+        }
+        return retVal;
+    }
+
+    private boolean hasPathSum(TreeNode root, int sum) {
+        if(root == null) return true;
+        if((sum-(root.val) == 0) && root.left == null && root.right == null){
+            return true;
+        }
+        return hasPathSum(root.right,sum-(root.val))
+                && hasPathSum(root.left,sum-(root.val));
+    }
+
 }
 
 class TreeNode {
-    int val;
+    final int val;
     TreeNode left, right;
 
     TreeNode(int val) {
@@ -212,15 +258,13 @@ class TreeNode {
     public void insert(int val) {
         if (val <= this.val) {
             if (left == null) {
-                TreeNode newNode = new TreeNode(val);
-                left = newNode;
+                left = new TreeNode(val);
             } else {
                 left.insert(val);
             }
         } else {
             if (right == null) {
-                TreeNode newNode = new TreeNode(val);
-                right = newNode;
+                right = new TreeNode(val);
             } else {
                 right.insert(val);
             }

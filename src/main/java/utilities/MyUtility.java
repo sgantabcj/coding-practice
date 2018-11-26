@@ -2,10 +2,23 @@ package utilities;
 
 import others.datastructures.TreeNode;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class MyUtility {
+
+    public static <T> void printMultiList(List<List<T>> multiList){
+        System.out.println("{");
+        for(List<T> lst : multiList){
+            System.out.println("\t"+ Arrays.toString(lst.toArray()));
+        }
+        System.out.println("}");
+    }
+
+//    public static void quickSort()
+
     public static int[] stringToIntegerArray(String line) {
         line = line.trim();
         if (line.length() == 0) return new int[0];
@@ -62,5 +75,6 @@ public class MyUtility {
         }
         return root;
     }
+
 
 }
