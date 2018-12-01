@@ -17,8 +17,6 @@ public class MyUtility {
         System.out.println("}");
     }
 
-//    public static void quickSort()
-
     public static int[] stringToIntegerArray(String line) {
         line = line.trim();
         if (line.length() == 0) return new int[0];
